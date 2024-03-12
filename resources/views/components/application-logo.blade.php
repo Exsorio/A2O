@@ -1,0 +1,1 @@
+<img src="{{ asset('pictures/logo_exsoriopolis.png')}}" width="70px">
