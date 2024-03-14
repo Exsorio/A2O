@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Demo\DemoController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Home\HomeSliderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,14 +18,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('frontend.index');
 });
 
 
-Route::controller(DemoController::class)->group(function () {
-    Route::get('/about', 'Index')->name('about.page')->middleware('check');
-    Route::get('/contact', 'ContactMethod')->name('contact.page');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 
 // Admin all Route
 Route::controller(AdminController::class)->group(function () {
@@ -38,6 +41,12 @@ Route::controller(AdminController::class)->group(function () {
 });
 
 
+// Home Slide all Route
+Route::controller(HomeSliderController::class)->group(function () {
+    Route::get('/home/slide', 'homeSlider')->name('home.slide');
+    Route::post('/store/slide', 'storeSlide')->name('store.silde');
+});
+
 
 Route::get('/dashboard', function () {
     return view('admin.index');
@@ -48,5 +57,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
+
 
 require __DIR__.'/auth.php';
