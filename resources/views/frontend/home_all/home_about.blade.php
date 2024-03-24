@@ -47,7 +47,7 @@
                             <img src="{{ asset('frontend/assets/img/icons/about_icon.png') }}" alt="">
                         </div>
                         <div class="about__exp__content">
-                            <p>{{ $aboutPage->short_title }}</p>
+                            <p><span>{{ $aboutPage->short_title }}</span></p>
                         </div>
                     </div>
                     <p class="desc">{{ $aboutPage->short_description }}</p>
