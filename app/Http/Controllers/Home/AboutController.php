@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Home;
 
 use App\Models\About;
+use App\Models\MultiImage;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManager;
+use Carbon\Carbon;
 
 class AboutController extends Controller
 {
@@ -68,5 +70,44 @@ class AboutController extends Controller
 
         $aboutPage = About::find(1);
         return view('frontend.about_page',  compact('aboutPage'));
+    }// End Method
+
+    
+    public function aboutMultiImage(){
+        return view('admin.about_page.multipage');
+    }// End Method
+
+
+    public function storeMultiImage(Request $request){
+        $images = $request->file('multi_image');
+
+        foreach ($images as  $multi_image) {
+            $name_gen = hexdec(uniqid()).'.'.$multi_image->getClientOriginalExtension();
+
+            $imageR = ImageManager::imagick()->read($multi_image)->resize(220,220)->save('upload/multi/'.$name_gen);
+
+            $save_url = 'upload/multi/'.$name_gen;
+
+            MultiImage::insert([
+                'multi_image' => $save_url,
+                'created_at'  => Carbon::now()
+            ]);
+
+        }// End foreach
+
+        $notification = array(
+            'message'       => 'About Page Update with Image Successfully',
+            'alert-type'    =>  'success'
+        );
+
+        return redirect()->back()->with($notification);
+
+    }
+
+    public function allMultiImage(){
+
+        $allMultiImage = MultiImage::all();
+
+        return view('admin.about_page.all_multi_image', compact('allMultiImage'));
     }// End Method
 }

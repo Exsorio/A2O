@@ -50,10 +50,16 @@ Route::controller(HomeSliderController::class)->group(function () {
 
 //  About Page all Route
 Route::controller(AboutController::class)->group(function () {
+    //Backend
     Route::get('/about/page', 'aboutPage')->name('about.page');
     Route::post('/update/about', 'updateAbout')->name('update.about');
-
+    Route::get('/about/multi/image', 'aboutMultiImage')->name('about.multi.image');
+    Route::post('/store/multi/image', 'storeMultiImage')->name('store.multi.image');
+    Route::get('/all/multi/image', 'allMultiImage')->name('all.multi.image');
+    //Frontend
     Route::get('/about', 'homeAbout')->name('home.about');
+
+
 });
 
 
