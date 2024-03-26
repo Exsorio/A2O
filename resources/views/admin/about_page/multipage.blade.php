@@ -14,12 +14,15 @@
                         </div>
                         <div class="card-body">                             
                             <div class="row mb-3">
-                                <div class="col-md-2">
-                                    <img id="showImage" class="rounded img-thumbnail" src="{{url('upload/admin_images/no_image.jpg') }}" alt="Card image cap">
-                                </div>
-                                <div class="col-sm-10">
+                                <div class="col-sm-12">
                                         <h5 class="card-title">About Multi Image</h5>    
                                         <input class="form-control" type="file" id="multi_image" name ="multi_image[]" multiple="" >
+                                        
+                                </div>
+                            </div>
+                            <div class="row mb-3">   
+                                <div class="col-sm-12">
+                                    <output id="list"></output>
                                 </div>
                             </div>   
                             <input type="submit" class="btn btn-info waves-effect waves-light" value="Update Multi Image">
@@ -35,15 +38,49 @@
 
 <script type="text/javascript">
     $(document).ready( function(){
-        $('#multi_image').change( function(e){
-            var reader = new FileReader();
-            reader.onload = function(e){
-                $('#showImage').attr("src", e.target.result);
+    function handleFileSelect(evt) {
+        $('#list').empty(); //Clean the list before print news elements
+        var files = evt.target.files; // FileList object
+
+        // Loop through the FileList and render image files as thumbnails.
+        for (var i = 0, f; f = files[i]; i++) {
+
+            // Only process image files.
+            if (!f.type.match('image.*')) {
+                continue;
             }
-            reader.readAsDataURL(e.target.files['0']);
-        });
+
+            var reader = new FileReader();
+
+            // Closure to capture the file information.
+            reader.onload = (function(theFile) {
+                return function(e) {
+                    // Render thumbnail.
+                    var span = document.createElement('span');
+                    span.className = 'img-wrap'; // Add class to the span
+                    span.innerHTML = ['<img class="rounded img-thumbnail" style="max-width: 200px; height:150px;" src="', e.target.result,
+                                    '" title="', escape(theFile.name), '"/>'].join('');
+                    document.getElementById('list').insertBefore(span, null);
+                };
+            })(f);
+
+            // Read in the image file as a data URL.
+            reader.readAsDataURL(f);
+        }
+    }
+
+    document.getElementById('multi_image').addEventListener('change', handleFileSelect, false);
+
+
+
     });
 
-</script>    
+</script>  
 
+<style>
+.img-wrap {
+    position: relative;
+    display: inline-block;
+}
+</style>
 @endsection

@@ -96,11 +96,11 @@ class AboutController extends Controller
         }// End foreach
 
         $notification = array(
-            'message'       => 'About Page Update with Image Successfully',
+            'message'       => 'Multi image Update with Image Successfully',
             'alert-type'    =>  'success'
         );
 
-        return redirect()->back()->with($notification);
+        return redirect()->route('all.multi.image')->with($notification);
 
     }
 
@@ -109,5 +109,54 @@ class AboutController extends Controller
         $allMultiImage = MultiImage::all();
 
         return view('admin.about_page.all_multi_image', compact('allMultiImage'));
+    }// End Method
+
+
+    public function editMultiImage($id){
+
+        $multiImage = MultiImage::findOrFail($id);
+        return view('admin.about_page.edit_multi_image', compact('multiImage'));
+
+    }// End Method
+
+    public function updateMultiImage(Request $request){
+        $multi_image_id = $request->id;
+
+        if ($request->file('multi_image')) {
+            $image = $request->file('multi_image');
+            $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
+
+            $imageR = ImageManager::imagick()->read($image)->resize(220,220)->save('upload/multi/'.$name_gen);
+
+            $save_url = 'upload/multi/'.$name_gen;
+
+            MultiImage::findOrFail($multi_image_id)->update([
+                'multi_image' => $save_url
+            ]);
+
+            $notification = array(
+                'message'       => 'Multi image Update with Image Successfully',
+                'alert-type'    =>  'success'
+            );
+
+            return redirect()->route('all.multi.image')->with($notification);
+            
+        }
+    }// End Method
+
+    public function deleteMultiImage($id){
+
+        $multiImage = MultiImage::findOrFail($id);
+        $img = $multiImage->multi_image;
+        unlink($img);
+        MultiImage::findOrFail($id)->delete();
+
+        $notification = array(
+            'message'       => 'Multi image Delete Successfully',
+            'alert-type'    =>  'success'
+        );
+
+        return redirect()->back()->with($notification);
+
     }// End Method
 }
